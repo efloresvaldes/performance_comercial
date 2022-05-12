@@ -1,5 +1,7 @@
 <?php
 
+use App\CustomClass\PerformanceComercial;
+use App\Http\Controllers\PerformanceComercialController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,10 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/con_desempenho', function () {
-    return view('app.con_performance');
-});
-
 Route::get('/under_construction', function () {
     return view('under_construction');
 });
+
+Route::get('/test', [PerformanceComercialController::class, 'test']);
+Route::get('/con_desempenho', [PerformanceComercialController::class, 'performanceComercialHome']);

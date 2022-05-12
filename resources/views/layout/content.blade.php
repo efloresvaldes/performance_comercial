@@ -22,9 +22,11 @@
   
   <link rel="stylesheet" href="{{asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}" >
 
-  <link rel="stylesheet" href="{{asset('plugins/daterangepicker/daterangepicker.css')}}" >
+
+
  
   <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.min.css')}}">
+   @yield('page_css')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -38,24 +40,24 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <h3>@yield('page_title')</h3>
-      </li>
-      
     </ul>
 
  
   </nav>
   <!-- /.navbar -->
 
-    @include('layout.aside_menu')
+  @include('layout.aside_menu')
 
-
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+      @yield('page_header')
+    <!-- Content Header (Page header) -->
+    <!-- /.content-header -->
 
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
-         @yield("page_content")
+          @yield('page_content')
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
@@ -87,7 +89,7 @@
 <script src="{{asset('plugins/jquery-knob/jquery.knob.min.js')}}" ></script>
 <!-- daterangepicker -->
 <script src="{{asset('plugins/moment/moment.min.js')}}" ></script>
-<script src="{{asset('plugins/daterangepicker/daterangepicker.js')}}"></script>
+
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="{{asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js')}}"></script>
 <!-- Summernote -->
@@ -98,8 +100,28 @@
 <script src="{{asset('template/js/adminlte.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('template/js/demo.js')}}" ></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{asset('template/js/dashboard.js')}}"  ></script>
-@yield('page-scripts')
+<script src="{{ asset('plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') }}" ></script>
+<script src="{{ asset('plugins/daterangepicker/daterangepicker.js') }}"></script>
+<script>
+    $(function() {
+        //Initialize Select2 Elements
+
+        //Date range picker
+        $('#period').daterangepicker()
+     
+        //Bootstrap Duallistbox
+        $('.duallistbox').bootstrapDualListbox()
+
+     
+      
+
+       
+
+    })
+    // BS-Stepper Init
+   
+</script>
+
+@yield('page_scripts ')
 </body>
 </html>
