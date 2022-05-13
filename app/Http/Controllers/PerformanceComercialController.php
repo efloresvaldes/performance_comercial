@@ -11,10 +11,33 @@ class PerformanceComercialController extends Controller
     public function performanceComercialHome(){
 
          $consultants = ConsultantModel::getConsultants();
-         return view('app.con_performance',['consultants'=>$consultants]);
+         return view('app.performance_comercial.con_performance',['consultants'=>$consultants]);
 
     }
-    public function test(){
-        return json_encode(ConsultantModel::getConsultants());
+
+    public function performanceComercialReport(Request $request){
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+        $consultantsReq = $request->consultants;
+        $consultantModel = new ConsultantModel();
+        $performance_comercial = [];
+        foreach($consultantsReq as $consultant){
+            $performance_comercial_by_consultant = $consultantModel->getPerformanceComercial($startDate,$endDate,$consultant);
+            array_push($performance_comercial,$performance_comercial_by_consultant);
+        }
+        
+        return view('app.performance_comercial.report',['consultants'=>$performance_comercial]);
+
+   }
+    public function generateBarChart(Request $request){
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+        $consultantsReq = $request->consultants;
+
+        $consultantModel = new ConsultantModel();
+
+        $graficData = $consultantModel->getBarLineChartInfoGeneral($startDate,$endDate,$consultantsReq);
+
+        return true;
     }
 }

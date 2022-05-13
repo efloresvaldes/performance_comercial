@@ -21,3 +21,5 @@ Route::get('/under_construction', function () {
 
 Route::get('/test', [PerformanceComercialController::class, 'test']);
 Route::get('/con_desempenho', [PerformanceComercialController::class, 'performanceComercialHome']);
+Route::post('/con_desempenho_res', [PerformanceComercialController::class, 'performanceComercialReport']);
+Route::post('/con_desempenho_graf', [PerformanceComercialController::class, 'generateBarChart']);

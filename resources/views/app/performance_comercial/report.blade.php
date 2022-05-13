@@ -1,20 +1,34 @@
-<div class="card">
-
+<div class="card card-report">
     <div class="card-body">
-        @foreach ($consultantsSelected as $consultantSelected)
+        @foreach ($consultants as $consultantSelected)
             <div class="row">
-                 
+                <table class="table table-bordered">
+                    <thead>
+                        <tr colspan="5"><h5>{{$consultantSelected[0]}}</h5></tr>
+                        <tr>
+                            <th>Periodo</th>
+                            <th>Receita Líquida</th>
+                            <th>Custo Fixo</th>
+                            <th>Comissão</th>
+                            <th>Lucro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($consultantSelected[1] as $performanceComercial)
+                        <tr>
+                            <td>{{$performanceComercial->getMonth()}}</td>
+                            <td>{{'R$ '.$performanceComercial->getNetIncome()}}</td>
+                            <td>{{'R$ '.$performanceComercial->getFixedCost()}}</td>
+                            <td>{{'R$ '.$performanceComercial->getComission()}}</td>
+                            <td>{{'R$ '.$performanceComercial->getProfit()}}</td>
+                        </tr>
+                            
+                        @endforeach
+                    </tbody>
+                </table>
 
             </div>
         @endforeach
     </div><!-- /.card-body -->
-    <div class="card-footer">
-        <div class="col-md-12 d-flex justify-content-end">
-            <div class="btn-group">
-                <button type="button" class="btn btn-success">Relatorio</button>
-                <button type="button" class="btn btn-info">Gráfico</button>
-                <button type="button" class="btn btn-warning">Pizza</button>
-            </div>
-        </div>
-    </div>
+  
 </div>
