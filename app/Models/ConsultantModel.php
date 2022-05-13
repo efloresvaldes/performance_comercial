@@ -67,36 +67,53 @@ class ConsultantModel
     public function  getBarLineChartInfoGeneral($startDate,$endDate, $usernames){
 
         $result = [];
+        $result[0]=0;
+        $result[1]=1;
+
         $sumFixedCost =0;
         $grData = [];
+       
+
+        $dateInterval = $this->calculateDatesInterval($startDate,$endDate);
+        $dateIntervalWithCorrectFormat =[];
+        
+        foreach($dateInterval as $dI){
+              array_push($dateIntervalWithCorrectFormat,$dI);
+        }
         foreach($usernames as $user){
-              $values = $this->getBarLineChartInfoIndividual($startDate,$endDate,$user);
+            
+              $values = $this->getBarLineChartInfoIndividual($dateInterval,$user);
               $sumFixedCost+= $this->getFixedCost($user);
               array_push($grData,$values);
+            
         }
         $average = $sumFixedCost/count($usernames);
-        array_push($result,$average);
-        array_push($result,$grData);
+        $result[0]=$average;
+        $result[1]=$dateIntervalWithCorrectFormat;
+        $result[2]=$grData;
+       
+        
 
         return $result;
     
     }
 
-    private function getBarLineChartInfoIndividual($startDate,$endDate, $username){
+    private function getBarLineChartInfoIndividual($dateInterval, $username){
 
-        $dateInterval = $this->calculateDatesInterval($startDate,$endDate);
 
         $result= [];
         $result [0]= $this->getConsultantName($username) ; 
-        $resPC = [] ;     
+    
+        $resPC = [] ;
+        
+           
         foreach($dateInterval as $dI){
             $dI = explode('-',$dI);
-
+          
             $netIncome = $this->getNetIncome($dI[0],$dI[1], $username);
 
-            $pc =  new PerformanceComercial($dI[0].'/'.$dI[1], $netIncome,0, 0, 0);
-
-            array_push($resPC,$pc);
+            array_push($resPC,$netIncome);
+           
         }
         array_push($result,$resPC);
         

@@ -1,56 +1,12 @@
 
 
+
 $(function () {
     'use strict'
 
 
 
- /*   var ctx2 = $("#pieChart");
-    var data1 = {
-        labels: ["match1", "match2", "match3", "match4", "match5"],
-        datasets: [{
-            label: "TeamA Score",
-            data: [10, 50, 25, 70, 40],
-            backgroundColor: [
-                "#DEB887",
-                "#A9A9A9",
-                "#DC143C",
-                "#F4A460",
-                "#2E8B57"
-            ],
-            borderColor: [
-                "#CDA776",
-                "#989898",
-                "#CB252B",
-                "#E39371",
-                "#1D7A46"
-            ],
-            borderWidth: [1, 1, 1, 1, 1]
-        }]
-    };
-    var options = {
-        responsive: true,
-        title: {
-            display: true,
-            position: "top",
-            text: "Pie Chart",
-            fontSize: 18,
-            fontColor: "#111"
-        },
-        legend: {
-            display: true,
-            position: "bottom",
-            labels: {
-                fontColor: "#333",
-                fontSize: 16
-            }
-        }
-    };
-    var chart1 = new Chart(ctx2, {
-        type: "pie",
-        data: data1,
-        options: options
-    });*/
+
 
     $('#periodStart').datepicker({
         format: 'mm/yyyy',
@@ -112,6 +68,7 @@ $(function () {
             alert('seleccione a data final do período mais longa do que a data inicial');
         }
         else {
+
             $.ajax({
 
                 type: 'post',
@@ -151,7 +108,7 @@ $(function () {
 
 
         let consultants = $("#consultantsSelect").val()
-        let startDateVal = $('#periodStart').val();
+        let startDateVal = $('#periodStart').val()
         let endDateVal = $('#periodEnd').val()
         if (startDateVal === '') {
             alert('Por favor, seleccione a data de início do período');
@@ -166,6 +123,7 @@ $(function () {
             alert('seleccione a data final do período mais longa do que a data inicial');
         }
         else {
+            $('#reportDiv').html('');
             $.ajax({
 
                 type: 'post',
@@ -185,51 +143,23 @@ $(function () {
 
                 },
                 success: function (response) {
+                    
                     $.unblockUI()
-                    const ctx = document.getElementById('barchart');
+                    let period = response[1]
+                    let datasets = generateDataSets(response)
+                    const ctx = document.getElementById('charts');
                     const myChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
-                            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                            datasets: [
-                                {
-                                    label: '# of Votes',
-                                    data: [12, 19, 3, 5, 2, 3],
-                                    backgroundColor: [
-                                        'rgba(255, 99, 132, 0.2)',
-                                       
-                                    ],
-                                    borderColor: [
-                                        'rgba(255, 99, 132, 1)',
-                                    ],
-                                    borderWidth: 1
-                                },
-                                {
-                                    label: '# of Votes',
-                                    data: [12, 19, 3, 5, 2, 3],
-                                    backgroundColor: [
-                                        'rgba(255, 99, 132, 0.2)',
-                                        'rgba(54, 162, 235, 0.2)',
-                                        'rgba(255, 206, 86, 0.2)',
-                                        'rgba(75, 192, 192, 0.2)',
-                                        'rgba(153, 102, 255, 0.2)',
-                                        'rgba(255, 159, 64, 0.2)'
-                                    ],
-                                    borderColor: [
-                                        'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)'
-                                    ],
-                                    borderWidth: 1
-                                }
-                            ]
+                            labels: period,
+                            datasets: datasets
                         },
                         options: {
                             scales: {
                                 y: {
+                                    beginAtZero: true
+                                },
+                                x: {
                                     beginAtZero: true
                                 }
                             }
@@ -250,7 +180,6 @@ $(function () {
     });
 
     $("#piechartBtn").click(function () {
-
 
         let consultants = $("#consultantsSelect").val()
         let startDateVal = $('#periodStart').val();
@@ -288,55 +217,40 @@ $(function () {
                 },
                 success: function (response) {
                     $.unblockUI()
-                    const ctx = document.getElementById('barchart');
-                    const myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                            datasets: [
-                                {
-                                    label: '# of Votes',
-                                    data: [12, 19, 3, 5, 2, 3],
-                                    backgroundColor: [
-                                        'rgba(255, 99, 132, 0.2)',
-                                       
-                                    ],
-                                    borderColor: [
-                                        'rgba(255, 99, 132, 1)',
-                                    ],
-                                    borderWidth: 1
-                                },
-                                {
-                                    label: '# of Votes',
-                                    data: [12, 19, 3, 5, 2, 3],
-                                    backgroundColor: [
-                                        'rgba(255, 99, 132, 0.2)',
-                                        'rgba(54, 162, 235, 0.2)',
-                                        'rgba(255, 206, 86, 0.2)',
-                                        'rgba(75, 192, 192, 0.2)',
-                                        'rgba(153, 102, 255, 0.2)',
-                                        'rgba(255, 159, 64, 0.2)'
-                                    ],
-                                    borderColor: [
-                                        'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)'
-                                    ],
-                                    borderWidth: 1
-                                }
-                            ]
+                    let graficData = generatePieDatasets(response)
+                    var ctx2 = $("#charts");
+                    var data1 = {
+                        labels: graficData[0],
+                        datasets: [{
+                            data: graficData[1],
+                            backgroundColor: graficData[2],
+
+                        }]
+                    };
+                    var options = {
+                        responsive: true,
+                        title: {
+                            display: true,
+                            position: "top",
+                            text: "Participação na Receita líquida",
+                            fontSize: 18,
+                            fontColor: "#111"
                         },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
+                        legend: {
+                            display: true,
+                            position: "bottom",
+                            labels: {
+                                fontColor: "#333",
+                                fontSize: 16
                             }
                         }
+                    };
+                    var chart1 = new Chart(ctx2, {
+                        type: "pie",
+                        data: data1,
+                        options: options
                     });
+                   
 
                 },
                 error: function (jqXHR) {
@@ -352,4 +266,66 @@ $(function () {
     });
 
 })
+
+
+
+function generateDataSets(data){
+    let result = [];
+    let barData=[]
+    for(let i = 0; i< data[1].length;i++){
+        barData.push(data[0])
+    }
+    result.push({
+        type: 'line',
+        data: barData,
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Promedio Costo Fijo'
+            }
+          },
+          fill: false,
+          borderColor: 'rgb(75, 192, 192)',
+          scales: {
+            y: {
+              stacked: true
+            }
+          }
+        },
+      })
+    data = data[2]
+    for(let i = 0; i < data.length; i++){
+        let rc='#'+ Math.floor(Math.random()*16777215).toString(16);
+        result.push({
+            label:data[i][0],
+            data: data[i][1],
+            backgroundColor:rc,
+            borderWidth:1
+
+        })
+    }
+    return result;
+}
+ function generatePieDatasets(dataPie){
+     let data = []
+     let labels = []
+     let colors=[]
+     let result=[]
+
+
+     for(let i = 1; i<dataPie.length; i++){
+         labels.push(dataPie[i][1])
+         data.push(dataPie[i][0])
+         colors.push('#'+ Math.floor(Math.random()*16777215).toString(16))
+     }
+
+     result.push(labels);
+     result.push(data);
+     result.push(colors);
+
+     return result;
+
+ }
+
 

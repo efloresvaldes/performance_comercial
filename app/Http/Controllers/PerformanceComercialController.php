@@ -38,10 +38,11 @@ class PerformanceComercialController extends Controller
 
         $graficData = $consultantModel->getBarLineChartInfoGeneral($startDate,$endDate,$consultantsReq);
 
-        return true;
+        return json_encode($graficData);
     }
 
     public function generatePieChart(Request $request){
+        
         $startDate = $request->startDate;
         $endDate = $request->endDate;
         $consultantsReq = $request->consultants;
@@ -50,6 +51,7 @@ class PerformanceComercialController extends Controller
 
         $graficData = $consultantModel->getPieChartInfoGeneral($startDate,$endDate,$consultantsReq);
 
-        return true;
+        
+        return json_encode($graficData);
     }
 }

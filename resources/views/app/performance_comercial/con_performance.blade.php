@@ -107,11 +107,10 @@
             
         </div>
         <div class="col-md-12">
-            <canvas id="barchart"></canvas>
+            <canvas id="charts"></canvas>
         </div>
-        <div class="col-md-12">
-            <canvas id="pieChart"></canvas>
-        </div>
+        
+       
     </div>
    
 @endsection
