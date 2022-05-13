@@ -71,7 +71,7 @@ class ConsultantModel
         $grData = [];
         foreach($usernames as $user){
               $values = $this->getBarLineChartInfoIndividual($startDate,$endDate,$user);
-              $sumFixedCost+= array_pop($values[1]);
+              $sumFixedCost+= $this->getFixedCost($user);
               array_push($grData,$values);
         }
         $average = $sumFixedCost/count($usernames);
@@ -83,25 +83,77 @@ class ConsultantModel
     }
 
     private function getBarLineChartInfoIndividual($startDate,$endDate, $username){
-        $months = [1,2,3,4,5];
+
+        $dateInterval = $this->calculateDatesInterval($startDate,$endDate);
+
         $result= [];
-        $result [0]= $this->getConsultantName($username) ;  
-        $valuesForUser =[];
+        $result [0]= $this->getConsultantName($username) ; 
+        $resPC = [] ;     
+        foreach($dateInterval as $dI){
+            $dI = explode('-',$dI);
 
-        foreach($months as $month){
+            $netIncome = $this->getNetIncome($dI[0],$dI[1], $username);
 
-           /* $netIncome = $this->getNetIncome($month, $username);
-            $fixedCost = $this->getFixedCost($username);
-            array_push($valuesForUser,number_format($netIncome, 2, ',', '.'));
-            array_push($valuesForUser,$fixedCost);
-            array_push($result,$valuesForUser);*/
-            
+            $pc =  new PerformanceComercial($dI[0].'/'.$dI[1], $netIncome,0, 0, 0);
+
+            array_push($resPC,$pc);
         }
-
-        
+        array_push($result,$resPC);
         
         return $result;
+    }
 
+    public function getPieChartInfoGeneral($startDate,$endDate,$usernames){
+        
+        $result = [];
+        $result[0] = 0;
+      
+        $sumNetIncome =0;
+       
+        $valuesTemp =[];
+        /*
+         * get the total of net incomes to calculate percentage 
+         * 
+         */
+        foreach($usernames as $user){
+            
+              $values = $this->getPieChartInfoIndividual($startDate,$endDate,$user);
+              $sumNetIncome+= $values[1];
+              array_push($valuesTemp, $values);
+              
+        }
+        foreach($valuesTemp as $val){
+            $percentage = 0;
+            $grData = [];
+            $totalConsultantNetIncome = $val[1];
+            if($sumNetIncome != 0){
+                $percentage = $totalConsultantNetIncome*100/$sumNetIncome;
+            }
+            array_push($grData, $percentage);
+            array_push($grData, $val[0]);
+           
+            array_push($result,$grData);
+           
+        }
+        $result[0] = $sumNetIncome;
+    
+        return $result;
+    }
+    private function getPieChartInfoIndividual($startDate,$endDate,$username){
+        $dateInterval = $this->calculateDatesInterval($startDate,$endDate);
+
+        $result= [];
+        $result [0]= $this->getConsultantName($username) ; 
+        $resPC = [] ; 
+        $netIncomeTotal = 0;    
+        foreach($dateInterval as $dI){
+            $dI = explode('-',$dI);
+            $netIncomeTotal += $this->getNetIncome($dI[0],$dI[1], $username);
+            
+        }
+        array_push($result,$netIncomeTotal);
+       
+        return $result;
     }
 
     /**
@@ -186,9 +238,6 @@ class ConsultantModel
              $i++;
 
         }
-
-       
-
 
        return $datesInterval;
     

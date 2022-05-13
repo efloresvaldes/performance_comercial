@@ -93,7 +93,7 @@
                         <div class="btn-group">
                             <button type="button" id="report" class="btn btn-success">Relatório</button>
                             <button type="button" id="barchartBtn" class="btn btn-info">Gráfico</button>
-                            <button type="button" class="btn btn-warning">Pizza</button>
+                            <button type="button" id="piechartBtn" class="btn btn-warning">Pizza</button>
                         </div>
                     </div>
                 </div>

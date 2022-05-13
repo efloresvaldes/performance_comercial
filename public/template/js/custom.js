@@ -58,7 +58,7 @@ $(function () {
         minViewMode: 1,
         autoclose: true,
         orientation: 'bottom',
-        startDate: new Date('10-01-2020'),
+        startDate: new Date('01-01-2007'),
         endDate: new Date()
     });
     $("#periodStart").change(function () {
@@ -81,8 +81,6 @@ $(function () {
     });
     //Bootstrap Duallistbox
     $('.duallistbox').bootstrapDualListbox({
-
-
 
         filterPlaceHolder: 'Filtro', // Marcador de posición del cuadro de entrada de la condición del filtro, contenido personalizable, el valor predeterminado es 'Filter',
         moveAllLabel: 'Agregar todas las opciones', // Agregar la etiqueta de todos los botones de opción, el valor predeterminado es 'Mover todo'
@@ -199,19 +197,10 @@ $(function () {
                                     data: [12, 19, 3, 5, 2, 3],
                                     backgroundColor: [
                                         'rgba(255, 99, 132, 0.2)',
-                                        'rgba(54, 162, 235, 0.2)',
-                                        'rgba(255, 206, 86, 0.2)',
-                                        'rgba(75, 192, 192, 0.2)',
-                                        'rgba(153, 102, 255, 0.2)',
-                                        'rgba(255, 159, 64, 0.2)'
+                                       
                                     ],
                                     borderColor: [
                                         'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)'
                                     ],
                                     borderWidth: 1
                                 },
@@ -260,8 +249,107 @@ $(function () {
 
     });
 
+    $("#piechartBtn").click(function () {
 
 
+        let consultants = $("#consultantsSelect").val()
+        let startDateVal = $('#periodStart').val();
+        let endDateVal = $('#periodEnd').val()
+        if (startDateVal === '') {
+            alert('Por favor, seleccione a data de início do período');
+        }
+        else if (endDateVal === '') {
+            alert('Por favor, seleccione a data final do período');
+        }
+        else if (consultants.length == 0) {
+            alert('Por favor, seleccione consultores para discutir');
+        }
+        else if (new Date('01-' + startDateVal).getTime() > new Date('01-' + endDateVal).getTime()) {
+            alert('seleccione a data final do período mais longa do que a data inicial');
+        }
+        else {
+            $.ajax({
+
+                type: 'post',
+                dataType: 'json',
+                url: './con_desempenho_pie',
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content"),
+                    'consultants': consultants,
+                    'startDate': startDateVal,
+                    'endDate': endDateVal,
+
+                },
+                beforeSend: function () {
+                    $.blockUI({
+                        message: '<h6>Gráfico de carregamento</h6>'
+                    });
+
+                },
+                success: function (response) {
+                    $.unblockUI()
+                    const ctx = document.getElementById('barchart');
+                    const myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                            datasets: [
+                                {
+                                    label: '# of Votes',
+                                    data: [12, 19, 3, 5, 2, 3],
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                       
+                                    ],
+                                    borderColor: [
+                                        'rgba(255, 99, 132, 1)',
+                                    ],
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: '# of Votes',
+                                    data: [12, 19, 3, 5, 2, 3],
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(255, 206, 86, 0.2)',
+                                        'rgba(75, 192, 192, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                        'rgba(255, 159, 64, 0.2)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(255, 206, 86, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                        'rgba(255, 159, 64, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                },
+                error: function (jqXHR) {
+                    $.unblockUI()
+                    alert(jqXHR.responseText)
+                }
+
+            });
+        }
+
+
+
+    });
 
 })
 

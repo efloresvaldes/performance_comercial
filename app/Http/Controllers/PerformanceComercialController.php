@@ -40,4 +40,16 @@ class PerformanceComercialController extends Controller
 
         return true;
     }
+
+    public function generatePieChart(Request $request){
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+        $consultantsReq = $request->consultants;
+
+        $consultantModel = new ConsultantModel();
+
+        $graficData = $consultantModel->getPieChartInfoGeneral($startDate,$endDate,$consultantsReq);
+
+        return true;
+    }
 }
