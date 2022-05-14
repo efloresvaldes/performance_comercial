@@ -187,8 +187,6 @@ class ConsultantModel
             ->where('cao_os.co_usuario', '=', $username)
             ->sum(DB::raw('cao_fatura.valor-(cao_fatura.valor*cao_fatura.total_imp_inc/100)'));
 
-
-
         return $netIncome;
     }
 

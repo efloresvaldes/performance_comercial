@@ -36,9 +36,9 @@
                                     <label>Período</label>
                                 </div>
                                 <div class="card-body">
-                                     <div class="row">
-                                         <div class="col-md-6">
-                                            
+                                    <div class="row">
+                                        <div class="col-md-6">
+
                                             <div class="form-group">
                                                 <label>Mês Inicial</label>
                                                 <div class="input-group">
@@ -47,12 +47,13 @@
                                                             <i class="far fa-calendar-alt"></i>
                                                         </span>
                                                     </div>
-                                                    <input autocomplete="off" type="text" class="form-control float-right" id="periodStart">
+                                                    <input autocomplete="off" type="text" class="form-control float-right"
+                                                        id="periodStart">
                                                 </div>
                                                 <!-- /.input group -->
                                             </div>
-                                         </div>
-                                         <div class="col-md-6">
+                                        </div>
+                                        <div class="col-md-6" id="inputFinal">
                                             <label>Mês Final</label>
                                             <div class="form-group">
                                                 <div class="input-group">
@@ -61,16 +62,18 @@
                                                             <i class="far fa-calendar-alt"></i>
                                                         </span>
                                                     </div>
-                                                    <input autocomplete="off" type="text" class="form-control float-right" id="periodEnd">
+
+                                                    <input autocomplete="off" type="text" class="form-control float-right"
+                                                        id="periodEnd">
                                                 </div>
                                                 <!-- /.input group -->
                                             </div>
-                                         </div>
-                                     </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
-                           
+
                         </div>
                     </div>
                     <div class="row">
@@ -79,7 +82,7 @@
                                 <label>Consultores</label>
                                 <select class="duallistbox" id="consultantsSelect" multiple="multiple">
                                     @foreach ($consultants as $consultant)
-                                        <option value={{$consultant->user_name}}>{{$consultant->fullname}}</option>
+                                        <option value={{ $consultant->user_name }}>{{ $consultant->fullname }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -104,15 +107,15 @@
     </div>
     <div class="row">
         <div class="col-md-12" id="reportDiv">
-            
+
         </div>
-        <div class="col-md-12">
-            <canvas id="charts"></canvas>
+        <div class="col-md-12" id="chartDiv">
+            <canvas id="charts"> </canvas>
         </div>
-        
-       
+      
+
+
     </div>
-   
 @endsection
 @section('page_scripts')
 @endsection
