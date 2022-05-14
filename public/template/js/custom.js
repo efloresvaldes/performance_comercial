@@ -2,15 +2,19 @@
 
 $(function () {
     'use strict'
+   
+    
+   
     $('#periodStart').datepicker({
         format: 'mm/yyyy',
         startView: 2,
-        
-        maxViewMode:2,
-        minViewMode:1,
+
+        maxViewMode: 2,
+        minViewMode: 1,
         autoclose: true,
         orientation: 'bottom',
         startDate: new Date('01-01-2007'),
+        orientation: 'top',
         endDate: new Date()
     });
     $("#periodStart").change(function () {
@@ -19,23 +23,23 @@ $(function () {
         var dateInfo = startDate.split('/');
         var endStartDate = new Date(dateInfo[0] + '-01-' + dateInfo[1])
         endStartDate = endStartDate.setMonth(endStartDate.getMonth() + 1);
-       
-            $('#periodEnd').datepicker({
-                format: 'mm/yyyy',
-                startView: 2,
-                maxViewMode:2,
-                minViewMode:1,
-                autoclose: true,
-                orientation: 'bottom',
-                startDate: new Date(endStartDate),
-                endDate: new Date('12-31-'+dateInfo[1])
-            })
-            
-            $('#periodEnd').datepicker('setFormat','mm/yyyy').datepicker('setStartView',1).datepicker('setMaxViewMode',2).datepicker('setMinViewMode',1).datepicker('setAutoclose',true).datepicker('setOrientation','bottom').datepicker('setMaxViewMode',2).datepicker('setStartDate',new Date(endStartDate)).datepicker('setEndDate',new Date('12-31-'+dateInfo[1]))
-            
-        
 
-    
+        $('#periodEnd').datepicker({
+            format: 'mm/yyyy',
+            startView: 2,
+            maxViewMode: 2,
+            minViewMode: 1,
+            autoclose: true,
+            orientation: 'top',
+            startDate: new Date(endStartDate),
+            endDate: new Date('12-31-' + dateInfo[1])
+        })
+
+        $('#periodEnd').datepicker('setFormat', 'mm/yyyy').datepicker('setStartView', 1).datepicker('setMaxViewMode', 2).datepicker('setMinViewMode', 1).datepicker('setAutoclose', true).datepicker('setOrientation', 'bottom').datepicker('setMaxViewMode', 2).datepicker('setStartDate', new Date(endStartDate)).datepicker('setEndDate', new Date('12-31-' + dateInfo[1]))
+
+
+
+
 
 
     });
@@ -47,22 +51,22 @@ $(function () {
         moveSelectedLabel: 'Adicionar todas as opções', // Agregar etiqueta del botón de opción seleccionado, predeterminado 'Mover seleccionado'
         removeAllLabel: 'Remover todas as opções', // Eliminar la etiqueta de todos los botones de opciones, el valor predeterminado es 'Eliminar todo'
 
-        infoText: 'Total de opções seleccionadas / não seleccionado {0} elementos', // Cuando no se filtra, elementos totales de opciones seleccionadas / no seleccionadas; el valor predeterminado es 'Mostrar todo {0}';
+        infoText: 'Total de elementos seleccionados / não seleccionado {0} opções', // Cuando no se filtra, elementos totales de opciones seleccionadas / no seleccionadas; el valor predeterminado es 'Mostrar todo {0}';
         infoTextFiltered: 'Vazados {0} elementos de {1} elementos',
         infoTextEmpty: 'Lista vazia', // cuando la condición del filtro es '', y el contenido que se muestra cuando la lista seleccionada / no seleccionada no tiene opciones; el valor predeterminado es 'Lista vacía';
         filterOnValues: false, // No sé el rol específico por el momento
     });
 
     $("#report").click(function () {
-        let consultants = $("#consultantsSelect").val()
-        let startDateVal = $('#periodStart').val()
-        let endDateVal = $('#periodEnd').val()
+        
+        if ($("#searchConsultants").valid()) {
+            let consultants = $("#consultantsSelect").val()
+            let startDateVal = $('#periodStart').val()
+            let endDateVal = $('#periodEnd').val()
 
-        if (validate(consultants,startDateVal,endDateVal)) {
+
             $("#reportDiv").html('');
-            //clearCanvas('pieChart');
-            clearCanvas('charts');
-
+            clearCanvas();
 
 
             $.ajax({
@@ -79,7 +83,7 @@ $(function () {
                 },
                 beforeSend: function () {
                     $.blockUI({
-                        message: '<h6>Relatório de carregamento</h6>'
+                        message: '<h6>carga</h6>'
                     });
 
                 },
@@ -94,20 +98,29 @@ $(function () {
                 }
 
             });
+
         }
+
 
 
 
     });
 
     $("#barchartBtn").click(function () {
-        let consultants = $("#consultantsSelect").val()
-        let startDateVal = $('#periodStart').val()
-        let endDateVal = $('#periodEnd').val()
-        if (validate(consultants,startDateVal,endDateVal)) {
+
+        if ($("#searchConsultants").valid()) {
+            let consultants = $("#consultantsSelect").val()
+            let startDateVal = $('#periodStart').val()
+            let endDateVal = $('#periodEnd').val()
+
             $("#reportDiv").html('');
-          //  clearCanvas('pieChart');
-            clearCanvas('charts');
+            clearCanvas();
+
+            var canvas = document.getElementById("charts");
+            var ctx = canvas.getContext('2d');
+
+           
+            
             $.ajax({
 
                 type: 'post',
@@ -122,46 +135,53 @@ $(function () {
                 },
                 beforeSend: function () {
                     $.blockUI({
-                        message: '<h6>Gráfico de carregamento</h6>'
+                        message: '<h6>Carga</h6>'
                     });
 
                 },
                 success: function (response) {
 
                     $.unblockUI()
-                    $("#charts").html('');
-                    $("#reportDiv").html('');
-                    let period = response[1]
-                    let datasets = generateDataSets(response)
-                    const ctx = document.getElementById('charts');
-                    
-                    const myChart = new Chart(ctx, {
+                    var data = {
+                        labels: response[1],
+                        datasets: generateDataSets(response)
+                    };
+                   
+                    var myBarChart = new Chart(ctx, {
                         type: 'bar',
-                        data: {
-                            labels: period,
-                            datasets: datasets
-                        },
+                        data: data,
                         options: {
-                            title: {
-                                display: true,
-                                text: "Performance Comercial",
-                                fontSize: 24,
+                            scales: {
+                                xAxes: [{
+                                    barPercentage: 1,
+                                    categoryPercentage: 0.5,
+                                    gridLines: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        fontColor: "#8f9092"
+                                    }
+                                }],
+                                yAxes: [{
+                                    display: true,
+                                    ticks: {
+                                        beginAtZero: true,
+                                        callback: function (value) {
+                                            return new Intl.NumberFormat('pt', { style: 'currency', currency: 'BRL' }).format(Number(value))
+                                        }
+                                    }
+                                }]
                             },
                             tooltips: {
                                 callbacks: {
-                                    label: function(tooltipItem) {
-                                        return "R$ " + Number(tooltipItem.yLabel).format(2);
+                                    label: function (tooltipItem) {
+                                        return new Intl.NumberFormat('pt', { style: 'currency', currency: 'BRL' }).format(Number(tooltipItem.yLabel))
+                                        
                                     }
                                 }
                             },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                   
-                                },
-                                x: {
-                                    beginAtZero: true
-                                }
+                            legend: {
+                                position: 'bottom'
                             }
                         }
                     });
@@ -181,13 +201,20 @@ $(function () {
 
     $("#piechartBtn").click(function () {
 
-        let consultants = $("#consultantsSelect").val()
-        let startDateVal = $('#periodStart').val()
-        let endDateVal = $('#periodEnd').val()
-        if (validate(consultants,startDateVal,endDateVal)) {
+        if ($("#searchConsultants").valid()) {
+
+            let consultants = $("#consultantsSelect").val()
+            let startDateVal = $('#periodStart').val()
+            let endDateVal = $('#periodEnd').val()
+            let test = $("#searchConsultants").validate();
+
             $("#reportDiv").html('');
-            clearCanvas('charts');
-            
+            clearCanvas();
+
+            var canvas = document.getElementById("charts");
+            var ctx = canvas.getContext('2d');
+
+
             $.ajax({
 
                 type: 'post',
@@ -202,15 +229,14 @@ $(function () {
                 },
                 beforeSend: function () {
                     $.blockUI({
-                        message: '<h6>Gráfico de carregamento</h6>'
+                        message: '<h6>Carga</h6>'
                     });
 
                 },
                 success: function (response) {
                     $.unblockUI()
 
-                    let graficData = generatePieDatasets(response)
-                    var ctx2 = $("#charts");
+                    const graficData = generatePieDatasets(response)
                     var data1 = {
                         labels: graficData[0],
                         datasets: [{
@@ -238,13 +264,13 @@ $(function () {
                         },
                         tooltips: {
                             callbacks: {
-                                label: function(tooltipItem,data) {
-                                    return Number(data.datasets[0].data[tooltipItem.index]).toFixed(1)+ "%";
+                                label: function (tooltipItem, data) {
+                                    return Number(data.datasets[0].data[tooltipItem.index]).toFixed(1) + "%";
                                 }
                             }
                         },
                     };
-                    var chart1 = new Chart(ctx2, {
+                    var chart1 = new Chart(ctx, {
                         type: "pie",
                         data: data1,
                         options: options
@@ -264,6 +290,7 @@ $(function () {
 
     });
 
+
 })
 
 function generateDataSets(data) {
@@ -275,15 +302,18 @@ function generateDataSets(data) {
     result.push({
         type: 'line',
         data: barData,
-        label:'Custo Fixo',
+        label: 'Custo Fixo',
+        backgroundColor: '#252850',
+        borderColor: '#252850',
+        fill: false,
         options: {
-            responsive:true,
+            responsive: true,
             plugins: {
                 title: {
                     display: true,
                     text: 'Promedio Costo Fijo'
                 }
-            }       
+            }
         },
     })
     data = data[2]
@@ -299,6 +329,7 @@ function generateDataSets(data) {
     }
     return result;
 }
+
 function generatePieDatasets(dataPie) {
     let data = []
     let labels = []
@@ -319,35 +350,81 @@ function generatePieDatasets(dataPie) {
     return result;
 
 }
-function validate(consultants,startDateVal,endDateVal) {
-    let res = false;
-    
-    if (startDateVal === '') {
-        alert('Por favor, seleccione a data de início do período');
 
-    }
-    else if (endDateVal === '') {
-        alert('Por favor, seleccione a data final do período');
-    }
-    else if (consultants.length == 0) {
-        alert('Por favor, seleccione consultores para discutir');
-    }
-    else if (new Date('01-' + startDateVal).getTime() > new Date('01-' + endDateVal).getTime()) {
-        alert('seleccione a data final do período mais longa do que a data inicial');
-    }
-    else {
-        res = true;
-    }
-    return res;
+
+function clearCanvas() {
+
+   
+   
+    document.getElementById("chartDiv").innerHTML = "";
+    document.getElementById("chartDiv").innerHTML = ' <canvas id="charts"> </canvas>';
+  
+    /*var canvas = document.getElementById(canvasId);
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var w = canvas.width;
+    canvas.width = 1;
+    canvas.width = w;*/
 }
 
-function clearCanvas(canvasId){
-    var canvas = document.getElementById(canvasId);
-    var context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-}
 
-Number.prototype.format = function(n, x) {
-    var re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\." : "$") + ")";
-    return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, "g"), "$&.");
-};
+
+
+$.validator.addMethod("containsElements", function (value, element, arg) {
+    return element.length != 0
+}, "Must contain elements");
+
+$.validator.addMethod("validDate", function (value, element, arg) {
+    var reg = new RegExp("(((0[123456789]|10|11|12)/(([1][9][0-9][0-9])|([2][0-9][0-9][0-9]))))");
+
+    if (value.length <= 7 && reg.test(value))
+        return true;
+
+    return false;
+
+}, "Must have valid date");
+
+$("#searchConsultants").validate({
+    // Specify validation rules
+    rules: {
+        // The key name on the left side is the name attribute
+        // of an input field. Validation rules are defined
+        // on the right side
+        periodStart: {
+            required: true,
+            validDate: true
+        },
+        periodEnd: {
+            required: true,
+            validDate: true
+        },
+        consultantsSelect_helper2: { containsElements: true }
+
+    },
+    errorClass: 'error form-check-label',
+    // Specify validation error messages
+    messages: {
+
+        periodStart: {
+            required: "* Campo Obrigatório",
+            validDate: "* Data Inválida"
+        },
+        periodEnd: {
+            required: "* Campo Obrigatório",
+            validDate: "* Data Inválida"
+        },
+        consultantsSelect_helper2: { containsElements: "* Campo Obrigatório" }
+
+    },
+    errorPlacement: function (error, element) {
+        if (element[0].type == "text") {
+            error.insertAfter(element.parent());
+        }
+
+        else {
+            error.insertAfter(element.parent().parent().parent());
+        }
+    },
+
+});
+
