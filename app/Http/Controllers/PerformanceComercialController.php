@@ -7,6 +7,12 @@ use App\Models\ConsultantModel;
 
 class PerformanceComercialController extends Controller
 {
+
+    public function home(){
+
+      return $this->redirect('/con_desempenho');
+
+    }
     
     public function performanceComercialHome(){
 
@@ -16,6 +22,8 @@ class PerformanceComercialController extends Controller
     }
 
     public function performanceComercialReport(Request $request){
+        
+     
         $startDate = $request->startDate;
         $endDate = $request->endDate;
         $consultantsReq = $request->consultants;

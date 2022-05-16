@@ -24,6 +24,8 @@ $(function () {
         var endStartDate = new Date(dateInfo[0] + '-01-' + dateInfo[1])
         endStartDate = endStartDate.setMonth(endStartDate.getMonth() + 1);
 
+        $('#periodEnd').val('');
+
         $('#periodEnd').datepicker({
             format: 'mm/yyyy',
             startView: 2,

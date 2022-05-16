@@ -27,8 +27,8 @@ class ConsultantModel
 		 */
 		public static function getConsultants()
 			{
-
-				$consultants = DB::table('cao_usuario')->join('permissao_sistema', 'cao_usuario.co_usuario', '=', 'permissao_sistema.co_usuario')
+				try{
+					$consultants = DB::table('cao_usuario')->join('permissao_sistema', 'cao_usuario.co_usuario', '=', 'permissao_sistema.co_usuario')
 						->select('cao_usuario.co_usuario as user_name', 'cao_usuario.no_usuario as fullname')
 						->where('permissao_sistema.co_sistema', '=', '1')
 						->where('permissao_sistema.in_ativo', '=', 'S')->where(function ($query)
@@ -38,6 +38,14 @@ class ConsultantModel
 								->orWhere('permissao_sistema.co_tipo_usuario', '=', '2');
 					})
 						->get();
+
+				}
+				catch(\Illuminate\Database\QueryException $ex){
+					//dd($ex->getMessage());
+                   
+				}
+
+				
 
 				return $consultants;
 			}
@@ -221,9 +229,14 @@ class ConsultantModel
 		 */
 		private function getNetIncome($month, $year, $username)
 			{
-
-				$netIncome = DB::table('cao_fatura')->join('cao_os', 'cao_fatura.co_os', '=', 'cao_os.co_os')
-						->whereMonth('cao_fatura.data_emissao', '=', $month)->whereYear('cao_fatura.data_emissao', '=', $year)->where('cao_os.co_usuario', '=', $username)->sum(DB::raw('cao_fatura.valor-(cao_fatura.valor*cao_fatura.total_imp_inc/100)'));
+				try{
+					$netIncome = DB::table('cao_fatura')->join('cao_os', 'cao_fatura.co_os', '=', 'cao_os.co_os')
+					->whereMonth('cao_fatura.data_emissao', '=', $month)->whereYear('cao_fatura.data_emissao', '=', $year)->where('cao_os.co_usuario', '=', $username)->sum(DB::raw('cao_fatura.valor-(cao_fatura.valor*cao_fatura.total_imp_inc/100)'));
+				}
+				catch(\Illuminate\Database\QueryException $ex){
+					//dd($ex->getMessage());
+                   
+				}
 
 				return $netIncome;
 			}
@@ -231,8 +244,14 @@ class ConsultantModel
 		private function getFixedCost($username)
 			{
 
-				$fixedCost = DB::table('cao_salario')->where('cao_salario.co_usuario', '=', $username)->select('cao_salario.brut_salario')
+				try{
+				   $fixedCost = DB::table('cao_salario')->where('cao_salario.co_usuario', '=', $username)->select('cao_salario.brut_salario')
 						->first();
+				}
+				catch(\Illuminate\Database\QueryException $ex){
+					//dd($ex->getMessage());
+                   
+				}
 				if ($fixedCost)
 					{
 						return $fixedCost->brut_salario;
@@ -243,16 +262,28 @@ class ConsultantModel
 
 		private function getCommission($month, $year, $username)
 			{
-				$comission = DB::table('cao_fatura')->join('cao_os', 'cao_fatura.co_os', '=', 'cao_os.co_os')
-						->whereMonth('cao_fatura.data_emissao', '=', $month)->whereYear('cao_fatura.data_emissao', '=', $year)->where('cao_os.co_usuario', '=', $username)->sum(DB::raw('(cao_fatura.valor-(cao_fatura.valor*cao_fatura.total_imp_inc/100))*cao_fatura.comissao_cn/100'));
+				try{
+					$comission = DB::table('cao_fatura')->join('cao_os', 'cao_fatura.co_os', '=', 'cao_os.co_os')
+					->whereMonth('cao_fatura.data_emissao', '=', $month)->whereYear('cao_fatura.data_emissao', '=', $year)->where('cao_os.co_usuario', '=', $username)->sum(DB::raw('(cao_fatura.valor-(cao_fatura.valor*cao_fatura.total_imp_inc/100))*cao_fatura.comissao_cn/100'));
+				}
+				catch(\Illuminate\Database\QueryException $ex){
+					//dd($ex->getMessage());
+                   
+				}
+			
 
 				return $comission;
 			}
 
 		private function getConsultantName($username)
 			{
+				try{
 				$usuario = DB::table('cao_usuario')->where('cao_usuario.co_usuario', '=', $username)->select('cao_usuario.no_usuario')
-						->first();
+						->first();}
+						catch(\Illuminate\Database\QueryException $ex){
+							//dd($ex->getMessage());
+						   
+						}
 
 				if ($usuario) return $usuario->no_usuario;
 				return "";
